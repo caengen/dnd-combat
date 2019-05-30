@@ -1,16 +1,21 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { Board } from './components/Board';
+import { Board, PieceList } from './components';
+import { DragDropContextProvider } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
+
 
 function App() {
   return (
     <div className="App">
-      <Board 
-        cellDimension={2}
-        width={8}
-        height={8}
-      />
+      <DragDropContextProvider backend={HTML5Backend}>
+        <Board 
+          cellDimension={1}
+          width={8}
+          height={8}
+        />
+        <PieceList />
+      </DragDropContextProvider>
     </div>
   );
 }

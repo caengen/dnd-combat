@@ -1,13 +1,30 @@
 import React from "react";
-import styled from "styled-components";
-import { Cell } from "../Cell";
+import styled, { css } from "styled-components";
+import { BoardCell } from "./BoardCell";
+import { Piece } from "..";
 
-function renderCell(index: number, boardHeight: number, dimension: number) {
+interface RenderCellArgs {
+  key: string;
+  x: number;
+  y: number; 
+  dimension: number;
+  piecePosition: number[];
+}
+function renderCell(args: RenderCellArgs) {
+  const { key, x, y, dimension, piecePosition} = args;
   return (
-    <CellWrapper key={index} boardHeight={boardHeight} flexBasis={dimension}>
-      <Cell />
+    <CellWrapper key={key} dimension={dimension}>
+      <BoardCell x={x} y={y}>
+        {renderPiece(x, y, piecePosition)}
+      </BoardCell>
     </CellWrapper>
   )
+}
+
+function renderPiece(x: number, y: number, [pX, pY]: number[]) {
+  if (x === pX && y === pY) {
+    return <Piece />;
+  }
 }
 
 interface BoardProps {
@@ -18,14 +35,23 @@ interface BoardProps {
 export function Board(props: BoardProps) {
   const {width, height, cellDimension} = props;
   const squares = []
-  for (let i = 0; i < width * height; i++) {
-    squares.push(renderCell(i, height, cellDimension));
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      squares.push(renderCell({
+        index: `${x}${y}`, 
+        x, 
+        y, 
+        dimension: cellDimension,
+        
+      }));
+    }
   }
 
   return (
     <StyledBoard
       width={width * cellDimension}
       height={height * cellDimension}
+      cellDimension={cellDimension}
     >
       {squares}
     </StyledBoard>
@@ -35,21 +61,20 @@ export function Board(props: BoardProps) {
 interface StyledBoardProps {
   width: number;
   height: number;
+  cellDimension: number;
 }
 const StyledBoard = styled.div<StyledBoardProps>`
-  display: flex;
-  width: ${p => p.width}em;
-  height: ${p => p.height}em;
-  flex-flow: row wrap;
+  display: grid;
+  ${p => css`grid-template-columns: repeat(${p.width}, ${p.cellDimension}em);`}
+  grid-gap: .25em;
 `;
 
 interface CellWrapperProps {
-  flexBasis: number;
-  boardHeight: number;
+  dimension: number;
 }
 const CellWrapper = styled.div<CellWrapperProps>`
-  flex-grow: 1;
-  flex-shrink: 0;
-  flex-basis: ${p => p.flexBasis}%;
-  height: ${p => 512 * (p.flexBasis / 100)}px;
+  ${p => css`
+    width: ${p.dimension}em;
+    height: ${p.dimension}em;
+  `}
 `;
