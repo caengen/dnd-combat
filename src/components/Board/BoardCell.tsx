@@ -2,10 +2,13 @@ import React from "react";
 import {Cell } from "..";
 import { DropTargetConnector, DropTargetMonitor, DragElementWrapper, DropTarget } from "react-dnd";
 import { Draggables } from "../../types";
+import { PieceAction } from "../../actions";
 
 const cellTarget = {
   drop(props: BoardCellProps, monitor: DropTargetMonitor) {
-    movePiece(props.x, props.y)
+    // see beginDrag in Piece.tsx
+    const item: { id: string } = monitor.getItem();
+    props.dropPiece(item.id)
   }
 }
 
@@ -23,11 +26,14 @@ function collect(connect: DropTargetConnector, monitor: DropTargetMonitor): DndP
 interface BoardCellProps {
   x: number;
   y: number;
+  dropPiece: (id: string) => PieceAction;
   children?: any;
 }
 function BoardCell(props: BoardCellProps & DndProps) {
   return props.connectDropTarget(
-    <Cell>{props.children}</Cell>
+    <div>
+      <Cell>{props.children}</Cell>
+    </div>
   );
 }
 

@@ -2,10 +2,11 @@ import React from "react";
 import { DragSource, DragSourceMonitor, DragSourceConnector, DragElementWrapper, DragSourceOptions } from "react-dnd";
 import { Draggables } from "../types";
 import styled from "styled-components";
+import { Piece as PieceType} from "../types";
 
 const pieceSource = {
-  beginDrag(props: { id: string }) {
-    return { pieceId: props.id };
+  beginDrag(props: PieceProps) {
+    return { id: props.piece.id };
   }
 }
 
@@ -20,6 +21,9 @@ function collect(connect: DragSourceConnector, monitor: DragSourceMonitor): DndP
   }
 }
 
+interface PieceProps {
+  piece: PieceType;
+}
 function Piece(props: DndProps) {
   const { connectDragSource, isDragging } = props;
   return connectDragSource(

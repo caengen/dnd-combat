@@ -1,30 +1,34 @@
-import React, {useState} from "react";
+import React, { useContext} from "react";
 import styled from "styled-components";
 import { Piece } from ".";
 import uuidv4 from "uuid";
-import { Draggables } from "../types";
+import { DraggableType, Piece as PieceType } from "../types";
+import { StoreContext } from "../StoreContext";
+import { addPiece } from "../actions";
 
-interface Monster {
-  id: string;
-  kind: string;
-}
-function renderMonster(monsters: Monster) {
+function renderMonster(monster: PieceType) {
   return (
-    <li>
-      <Piece />
+    <li key={monster.id}>
+      <Piece piece={monster} />
+    </li>
+  );
+}
+function renderPC(pc: PieceType) {
+  return (
+    <li key={pc.id}>
+      <Piece piece={pc} />
     </li>
   );
 }
 export function PieceList() {
-  const [monsters, setMonsters] = useState<Monster[]>([]);
-  const [players, setPlayers] = useState([]);
-  
+  const { state, dispatch} = useContext(StoreContext);
+  const monsters = state.pieces.filter(p => p.type === DraggableType.Monster);
+  const pcs = state.pieces.filter(p => p.type === DraggableType.Player);
   const addMonster = () => {
-    setMonsters([
-      ...monsters,
-      { id: uuidv4(), kind: Draggables.Monster }
-    ]);
-  }
+    dispatch(
+      addPiece(uuidv4(), "Monster", DraggableType.Monster, monsters.length)
+    )
+  };
 
   return (
     <StyledPieceList>
@@ -38,7 +42,7 @@ export function PieceList() {
       <PlayerSection>
         <h1>Players</h1>
         <ul>
-          {players}
+          {pcs.map(renderPC)}
         </ul>
         <button>Add PC</button>
       </PlayerSection>

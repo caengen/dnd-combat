@@ -1,29 +1,34 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled, { css } from "styled-components";
-import { BoardCell } from "./BoardCell";
+import BoardCell from "./BoardCell";
 import { Piece } from "..";
+import {Piece as PieceType} from "../../types";
+import { StoreContext } from "../../StoreContext";
+import { dropPiece } from "../../actions";
 
 interface RenderCellArgs {
-  key: string;
   x: number;
   y: number; 
   dimension: number;
-  piecePosition: number[];
+  pieces: PieceType[];
+  dropPiece: (id: string) => any;
 }
 function renderCell(args: RenderCellArgs) {
-  const { key, x, y, dimension, piecePosition} = args;
+  const { x, y, dimension, dropPiece, pieces} = args;
   return (
-    <CellWrapper key={key} dimension={dimension}>
-      <BoardCell x={x} y={y}>
-        {renderPiece(x, y, piecePosition)}
+    <CellWrapper key={`${x}${y}`} dimension={dimension}>
+      <BoardCell x={x} y={y} dropPiece={dropPiece}>
+        {renderPiece(x, y, pieces)}
       </BoardCell>
     </CellWrapper>
   )
 }
 
-function renderPiece(x: number, y: number, [pX, pY]: number[]) {
-  if (x === pX && y === pY) {
-    return <Piece />;
+function renderPiece(x: number, y: number, pieces: PieceType[]) {
+  for (let piece of pieces) {
+    if (x === piece.x && y === piece.y) {
+      return <Piece piece={piece} />;
+    }
   }
 }
 
@@ -33,16 +38,17 @@ interface BoardProps {
   height: number;
 }
 export function Board(props: BoardProps) {
+  const { state, dispatch } = useContext(StoreContext);
   const {width, height, cellDimension} = props;
   const squares = []
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       squares.push(renderCell({
-        index: `${x}${y}`, 
         x, 
         y, 
         dimension: cellDimension,
-        
+        pieces: state.pieces,
+        dropPiece: (id: string) => dispatch(dropPiece(id, x, y))
       }));
     }
   }
@@ -77,4 +83,8 @@ const CellWrapper = styled.div<CellWrapperProps>`
     width: ${p.dimension}em;
     height: ${p.dimension}em;
   `}
+  & > div {
+    width: 100%;
+    height: 100%;
+  }
 `;
