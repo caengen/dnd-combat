@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import styled, { css } from "styled-components";
 import BoardCell from "./BoardCell";
 import { Piece } from "..";
@@ -16,7 +16,7 @@ interface RenderCellArgs {
 function renderCell(args: RenderCellArgs) {
   const { x, y, dimension, dropPiece, pieces} = args;
   return (
-    <CellWrapper key={`${x}${y}`} dimension={dimension}>
+    <CellWrapper key={`X${x}Y${y}`} dimension={dimension}>
       <BoardCell x={x} y={y} dropPiece={dropPiece}>
         {renderPiece(x, y, pieces)}
       </BoardCell>
@@ -34,14 +34,10 @@ function renderPiece(x: number, y: number, pieces: PieceType[]) {
   }
 }
 
-interface BoardProps {
-  cellDimension: number;
-  width: number;
-  height: number;
-}
-export function Board(props: BoardProps) {
+export function Board() {
   const { state, dispatch } = useContext(StoreContext);
-  const {width, height, cellDimension} = props;
+  const [boardConfig, setBoardConfig] = useState({width: 8, height: 8, cellDimension: 1})
+  const {width, height, cellDimension} = boardConfig;
   const squares = []
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
@@ -55,14 +51,35 @@ export function Board(props: BoardProps) {
     }
   }
 
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setBoardConfig({
+      ...boardConfig,
+      [e.target.name]: e.target.value
+    })
+  }
+
   return (
-    <StyledBoard
-      width={width * cellDimension}
-      height={height * cellDimension}
-      cellDimension={cellDimension}
-    >
-      {squares}
-    </StyledBoard>
+    <div>
+      <div>
+        Width:
+        <input value={width} onChange={handleInput} name="width" type="number" min="8" max="128" />
+      </div>
+      <div>
+        Height: 
+        <input value={height} onChange={handleInput} name="height" type="number" min="8" max="128" />
+      </div>
+      <div>
+        Cell dimension:
+        <input value={cellDimension} onChange={handleInput} name="cellDimension" type="number" min="1" max="8" />
+      </div>
+      <StyledBoard
+        width={width * cellDimension}
+        height={height * cellDimension}
+        cellDimension={cellDimension}
+      >
+        {squares}
+      </StyledBoard>
+    </div>
   );
 }
 

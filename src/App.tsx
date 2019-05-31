@@ -9,11 +9,7 @@ function App() {
   return (
     <div className="App">
       <DragDropContextProvider backend={HTML5Backend}>
-        <Board 
-          cellDimension={1}
-          width={8}
-          height={8}
-        />
+        <Board />
         <PieceList />
       </DragDropContextProvider>
     </div>
