@@ -3,6 +3,7 @@ import { DragSource, DragSourceMonitor, DragSourceConnector, DragElementWrapper,
 import { Draggables } from "../types";
 import styled from "styled-components";
 import { Piece as PieceType} from "../types";
+import orc from "../assets/pieces/001-orc.svg";
 
 const pieceSource = {
   beginDrag(props: PieceProps) {
@@ -29,7 +30,7 @@ function Piece(props: DndProps) {
   return connectDragSource(
     <div>
       <StyledPiece isDragging={isDragging}>
-        ♘
+        {<img src={orc} />}
       </StyledPiece>
     </div>
   );
@@ -37,8 +38,9 @@ function Piece(props: DndProps) {
 
 const StyledPiece = styled.div<{isDragging: boolean}>`
   opacity: ${p => p.isDragging ? 0.5 : 1};
-  font-size: 2em;
-  font-weight: bold;
+  img {
+    width: 1em;
+  }
   cursor: move;
 `;
 

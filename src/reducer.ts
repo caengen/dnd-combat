@@ -1,5 +1,5 @@
 import { PieceAction, PieceActionTypes } from "./actions";
-import {Piece } from "./types";
+import { Piece } from "./types";
 import {update} from "lodash/fp";
 
 export interface State {
@@ -23,7 +23,7 @@ export const reducer = (state: State = initialState, action: PieceAction): State
         if (index < 0) {
           return state;
         }
-        
+
         return update(`pieces[${index}]`, (piece: Piece) => {
             return {
               ...piece,
