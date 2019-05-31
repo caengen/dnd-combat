@@ -9,7 +9,7 @@ import { addPiece } from "../actions";
 function renderMonster(monster: PieceType) {
   return (
     <Li key={monster.id}>
-      <Piece piece={monster} />
+      <Piece size={2} piece={monster} />
       <PieceInfo piece={monster} />
     </Li>
   );
@@ -17,7 +17,7 @@ function renderMonster(monster: PieceType) {
 function renderPC(pc: PieceType) {
   return (
     <Li key={pc.id}>
-      <Piece piece={pc} />
+      <Piece size={2} piece={pc} />
       <PieceInfo piece={pc} />
     </Li>
   );

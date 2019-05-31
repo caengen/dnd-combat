@@ -24,22 +24,23 @@ function collect(connect: DragSourceConnector, monitor: DragSourceMonitor): DndP
 
 interface PieceProps {
   piece: PieceType;
+  size?: number;
 }
 function Piece(props: PieceProps & DndProps) {
-  const { connectDragSource, isDragging } = props;
+  const { size, connectDragSource, isDragging } = props;
   return connectDragSource(
     <div>
-      <StyledPiece isDragging={isDragging}>
+      <StyledPiece size={size} isDragging={isDragging}>
         {<img src={orc} />}
       </StyledPiece>
     </div>
   );
 }
 
-const StyledPiece = styled.div<{isDragging: boolean}>`
+const StyledPiece = styled.div<{size?: number, isDragging: boolean}>`
   opacity: ${p => p.isDragging ? 0.5 : 1};
   img {
-    width: 1em;
+    width: ${p => p.size ? p.size : 1}em;
   }
   cursor: move;
 `;

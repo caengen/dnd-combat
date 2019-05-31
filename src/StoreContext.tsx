@@ -5,10 +5,17 @@ import { PieceAction } from "./actions";
 export const StoreContext = createContext<{state: State, dispatch: React.Dispatch<PieceAction>}>({state: initialState, dispatch: (...v: any) => ({type: ""})});
 
 export function StoreProvider(props: { children?: any }) {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  let initState = initialState;
+  useEffect(() => {
+    const storedState = localStorage.getItem("dndCombatState");
+    if (storedState) {
+      initState = JSON.parse(storedState);
+    }
+  }, []);
+  const [state, dispatch] = useReducer(reducer, initState);
 
   useEffect(() => {
-    console.log(state);
+    localStorage.setItem("dndCombatState", JSON.stringify(state));
   }, [state])
 
   return (
