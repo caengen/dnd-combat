@@ -25,7 +25,7 @@ function collect(connect: DragSourceConnector, monitor: DragSourceMonitor): DndP
 interface PieceProps {
   piece: PieceType;
 }
-function Piece(props: DndProps) {
+function Piece(props: PieceProps & DndProps) {
   const { connectDragSource, isDragging } = props;
   return connectDragSource(
     <div>

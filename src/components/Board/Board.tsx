@@ -27,7 +27,9 @@ function renderCell(args: RenderCellArgs) {
 function renderPiece(x: number, y: number, pieces: PieceType[]) {
   for (let piece of pieces) {
     if (x === piece.x && y === piece.y) {
-      return <Piece piece={piece} />;
+      return (
+        <Piece piece={piece} />
+      );
     }
   }
 }

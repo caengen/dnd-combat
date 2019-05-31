@@ -1,6 +1,6 @@
 import React, { useContext} from "react";
 import styled from "styled-components";
-import { Piece } from ".";
+import { Piece, PieceInfo } from ".";
 import uuidv4 from "uuid";
 import { DraggableType, Piece as PieceType } from "../types";
 import { StoreContext } from "../StoreContext";
@@ -8,16 +8,18 @@ import { addPiece } from "../actions";
 
 function renderMonster(monster: PieceType) {
   return (
-    <li key={monster.id}>
+    <Li key={monster.id}>
       <Piece piece={monster} />
-    </li>
+      <PieceInfo piece={monster} />
+    </Li>
   );
 }
 function renderPC(pc: PieceType) {
   return (
-    <li key={pc.id}>
+    <Li key={pc.id}>
       <Piece piece={pc} />
-    </li>
+      <PieceInfo piece={pc} />
+    </Li>
   );
 }
 export function PieceList() {
@@ -25,8 +27,9 @@ export function PieceList() {
   const monsters = state.pieces.filter(p => p.type === DraggableType.Monster);
   const pcs = state.pieces.filter(p => p.type === DraggableType.Player);
   const addMonster = () => {
+    const name = monsters.length !== 0 ? `Monster ${monsters.length}` : "Monster";
     dispatch(
-      addPiece(uuidv4(), "Monster", DraggableType.Monster, monsters.length)
+      addPiece(uuidv4(), name, DraggableType.Monster, monsters.length)
     )
   };
 
@@ -34,16 +37,16 @@ export function PieceList() {
     <StyledPieceList>
       <MonsterSection>
         <h1>Monsters</h1>
-        <ul>
+        <Ul>
           {monsters.map(renderMonster)}
-        </ul>
+        </Ul>
         <button onClick={addMonster}>Add monster</button>
       </MonsterSection>
       <PlayerSection>
         <h1>Players</h1>
-        <ul>
+        <Ul>
           {pcs.map(renderPC)}
-        </ul>
+        </Ul>
         <button>Add PC</button>
       </PlayerSection>
     </StyledPieceList>
@@ -51,6 +54,15 @@ export function PieceList() {
 }
 
 const StyledPieceList = styled.div`
+  display: flex;
+`;
+
+const Ul = styled.ul`
+  padding: 0;
+`;
+
+const Li = styled.li`
+  list-style: none;
   display: flex;
 `;
 
