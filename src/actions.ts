@@ -1,13 +1,14 @@
-import { DraggableType } from "./types";
+import { DraggableType, AppConfig } from "./types";
 
-export enum PieceActionTypes {
+export enum ActionTypes {
   addPiece = "AddPieceAction",
   movePiece = "MovePieceAction",
   dropPiece = "DropPieceAction",
+  updateConfig = "UpdateConfigAction"
 }
 
 export interface AddPieceAction {
-  type: PieceActionTypes.addPiece;
+  type: ActionTypes.addPiece;
   payload: {
     id: string;
     type: DraggableType;
@@ -18,7 +19,7 @@ export interface AddPieceAction {
 
 export function addPiece(id: string, name: string, type: DraggableType, listIndex: number): AddPieceAction {
   return {
-    type: PieceActionTypes.addPiece,
+    type: ActionTypes.addPiece,
     payload: {
       id,
       name,
@@ -29,7 +30,7 @@ export function addPiece(id: string, name: string, type: DraggableType, listInde
 }
 
 export interface MovePieceAction {
-  type: PieceActionTypes.movePiece,
+  type: ActionTypes.movePiece,
   payload: {
     id: string;
   };
@@ -37,7 +38,7 @@ export interface MovePieceAction {
 
 export function movePiece(id: string): MovePieceAction {
   return {
-    type: PieceActionTypes.movePiece,
+    type: ActionTypes.movePiece,
     payload: {
       id
     }
@@ -45,7 +46,7 @@ export function movePiece(id: string): MovePieceAction {
 }
 
 export interface DropPieceAction {
-  type: PieceActionTypes.dropPiece,
+  type: ActionTypes.dropPiece,
   payload: {
     id: string;
     x: number;
@@ -55,7 +56,7 @@ export interface DropPieceAction {
 
 export function dropPiece(id: string, x: number, y: number): DropPieceAction {
   return {
-    type: PieceActionTypes.dropPiece,
+    type: ActionTypes.dropPiece,
     payload: {
       id,
       x,
@@ -64,4 +65,16 @@ export function dropPiece(id: string, x: number, y: number): DropPieceAction {
   }
 }
 
-export type PieceAction = AddPieceAction | MovePieceAction | DropPieceAction;
+export interface UpdateConfigAction {
+  type: ActionTypes.updateConfig,
+  payload: AppConfig
+}
+
+export function updateConfig(newConfig: AppConfig): UpdateConfigAction {
+  return {
+    type: ActionTypes.updateConfig,
+    payload: newConfig
+  }
+}
+
+export type Action = AddPieceAction | MovePieceAction | DropPieceAction | UpdateConfigAction;

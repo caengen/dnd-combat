@@ -1,8 +1,8 @@
 import React, {createContext, useReducer, useEffect} from "react";
 import { initialState, reducer, State } from "./reducer";
-import { PieceAction } from "./actions";
+import { Action } from "./actions";
 
-export const StoreContext = createContext<{state: State, dispatch: React.Dispatch<PieceAction>}>({state: initialState, dispatch: (...v: any) => ({type: ""})});
+export const StoreContext = createContext<{state: State, dispatch: React.Dispatch<Action>}>({state: initialState, dispatch: (...v: any) => ({type: ""})});
 
 export function StoreProvider(props: { children?: any }) {
   const reducerState = () => {

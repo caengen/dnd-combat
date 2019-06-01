@@ -2,7 +2,7 @@ import React from "react";
 import {Cell } from "..";
 import { DropTargetConnector, DropTargetMonitor, DragElementWrapper, DropTarget } from "react-dnd";
 import { Draggables } from "../../types";
-import { PieceAction } from "../../actions";
+import { Action } from "../../actions";
 
 const cellTarget = {
   drop(props: BoardCellProps, monitor: DropTargetMonitor) {
@@ -26,7 +26,7 @@ function collect(connect: DropTargetConnector, monitor: DropTargetMonitor): DndP
 interface BoardCellProps {
   x: number;
   y: number;
-  dropPiece: (id: string) => PieceAction;
+  dropPiece: (id: string) => Action;
   children?: any;
 }
 function BoardCell(props: BoardCellProps & DndProps) {

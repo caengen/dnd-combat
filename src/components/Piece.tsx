@@ -40,7 +40,7 @@ function Piece(props: PieceProps & DndProps) {
 const StyledPiece = styled.div<{size?: number, isDragging: boolean}>`
   opacity: ${p => p.isDragging ? 0.5 : 1};
   img {
-    width: ${p => p.size ? p.size : 1}em;
+    width: ${p => p.size ? `${p.size}em` : "100%"};
   }
   cursor: move;
 `;

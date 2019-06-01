@@ -1,10 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import styled, { css } from "styled-components";
 import BoardCell from "./BoardCell";
 import { Piece } from "..";
 import {Piece as PieceType} from "../../types";
 import { StoreContext } from "../../StoreContext";
-import { dropPiece } from "../../actions";
+import { dropPiece, updateConfig } from "../../actions";
 
 interface RenderCellArgs {
   x: number;
@@ -36,8 +36,7 @@ function renderPiece(x: number, y: number, pieces: PieceType[]) {
 
 export function Board() {
   const { state, dispatch } = useContext(StoreContext);
-  const [boardConfig, setBoardConfig] = useState({width: 8, height: 8, cellDimension: 1})
-  const {width, height, cellDimension} = boardConfig;
+  const {width, height, cellDimension} = state.config.board;
   const squares = []
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
@@ -51,27 +50,9 @@ export function Board() {
     }
   }
 
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setBoardConfig({
-      ...boardConfig,
-      [e.target.name]: e.target.value
-    })
-  }
-
   return (
     <div>
-      <div>
-        Width:
-        <input value={width} onChange={handleInput} name="width" type="number" min="8" max="128" />
-      </div>
-      <div>
-        Height: 
-        <input value={height} onChange={handleInput} name="height" type="number" min="8" max="128" />
-      </div>
-      <div>
-        Cell dimension:
-        <input value={cellDimension} onChange={handleInput} name="cellDimension" type="number" min="1" max="8" />
-      </div>
+      <BoardInput />
       <StyledBoard
         width={width * cellDimension}
         height={height * cellDimension}
@@ -82,6 +63,53 @@ export function Board() {
     </div>
   );
 }
+
+export function BoardInput() {
+  const { state, dispatch } = useContext(StoreContext);
+  const { width, height, cellDimension } = state.config.board;
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(updateConfig(
+      {
+        ...state.config,
+        board: {
+          ...state.config.board,
+          [e.target.name]: e.target.value
+        }
+      }
+    ));
+  }
+
+  return (
+    <StyledBoardInput>
+      <InputWrapper>
+        Width:
+        <input value={width} onChange={handleInput} name="width" type="number" min="8" max="128" />
+      </InputWrapper>
+      <InputWrapper>
+        Height: 
+        <input value={height} onChange={handleInput} name="height" type="number" min="8" max="128" />
+      </InputWrapper>
+      <InputWrapper>
+        Cell dimension:
+        <input value={cellDimension} onChange={handleInput} name="cellDimension" type="number" min="1" max="8" />
+      </InputWrapper>
+    </StyledBoardInput>
+  );
+}
+
+const StyledBoardInput = styled.div`
+  display: flex;
+`;
+
+const InputWrapper = styled.div`
+  margin: 0 .5em;
+  font-size: .5em;
+    display: flex;
+    align-items: center;
+    input {
+      margin-left: .5em;
+    }
+`;
 
 interface StyledBoardProps {
   width: number;
