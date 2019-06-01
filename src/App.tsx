@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 import { Board, PieceList } from './components';
 import { DragDropContextProvider } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
