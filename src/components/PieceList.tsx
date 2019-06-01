@@ -5,6 +5,7 @@ import uuidv4 from "uuid";
 import { DraggableType, Piece as PieceType } from "../types";
 import { StoreContext } from "../StoreContext";
 import { addPiece } from "../actions";
+import { pieceIcons } from "../assets/pieces/pieceIcons";
 
 function renderMonster(monster: PieceType) {
   return (
@@ -28,8 +29,10 @@ export function PieceList() {
   const pcs = state.pieces.filter(p => p.type === DraggableType.Player);
   const addMonster = () => {
     const name = monsters.length !== 0 ? `Monster ${monsters.length}` : "Monster";
+    const monsterIcons = Object.values(pieceIcons.monsters);
+    const icon = monsterIcons[Math.round(Math.random() * monsterIcons.length)];
     dispatch(
-      addPiece(uuidv4(), name, DraggableType.Monster, monsters.length)
+      addPiece(uuidv4(), name, icon, DraggableType.Monster, monsters.length)
     )
   };
 

@@ -13,16 +13,18 @@ export interface AddPieceAction {
     id: string;
     type: DraggableType;
     name: string;
+    icon: string;
     listIndex: number;
   };
 }
 
-export function addPiece(id: string, name: string, type: DraggableType, listIndex: number): AddPieceAction {
+export function addPiece(id: string, name: string, icon: string, type: DraggableType, listIndex: number): AddPieceAction {
   return {
     type: ActionTypes.addPiece,
     payload: {
       id,
       name,
+      icon,
       type,
       listIndex
     }
