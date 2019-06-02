@@ -37,8 +37,8 @@ function renderPiece(x: number, y: number, pieces: PieceType[], disableDrag?: bo
 
 export function Board() {
   const { state, dispatch } = useContext(StoreContext);
-  const {board, mode } = state.config;
-  const {width, height, cellDimension} = board;
+  const { board, mode } = state.config;
+  const { width, height, cellDimension } = board;
   const squares = []
 
   for (let y = 0; y < height; y++) {

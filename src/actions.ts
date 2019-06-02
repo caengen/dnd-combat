@@ -1,11 +1,13 @@
 import { DraggableType, AppConfig, SpellMode } from "./types";
+import { number } from "prop-types";
 
 export enum ActionTypes {
   addPiece = "AddPieceAction",
   movePiece = "MovePieceAction",
   dropPiece = "DropPieceAction",
   updateConfig = "UpdateConfigAction",
-  updateSpellMode = "UpdateSpellModeAction"
+  updateSpellMode = "UpdateSpellModeAction",
+  updateBoardMode = "UpdateBoardMode"
 }
 
 export interface AddPieceAction {
@@ -91,4 +93,22 @@ export function updateSpellMode(spellMode: SpellMode): UpdateSpellModeAction {
   }
 }
 
-export type Action = AddPieceAction | MovePieceAction | DropPieceAction | UpdateConfigAction | UpdateSpellModeAction;
+export interface SpellCoord {
+  x: number,
+  y: number,
+  spell: SpellMode;
+}
+
+export interface UpdateBoardAction {
+  type: ActionTypes.updateBoardMode,
+  payload: SpellCoord[];
+}
+
+export function updateBoard(spellCoords: SpellCoord) {
+  return {
+    type: ActionTypes.updateBoardMode,
+    payload: spellCoords
+  };
+}
+
+export type Action = AddPieceAction | MovePieceAction | DropPieceAction | UpdateConfigAction | UpdateSpellModeAction | UpdateBoardAction;

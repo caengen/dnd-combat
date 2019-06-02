@@ -1,11 +1,12 @@
-import { Action, ActionTypes } from "./actions";
-import { Piece, AppConfig, AppMode, SpellMode } from "./types";
+import { Action, ActionTypes, SpellCoord } from "./actions";
+import { Piece, AppConfig, AppMode, SpellMode, Tile, Terrain } from "./types";
 import { update } from "lodash/fp";
 
 export interface State {
   pieces: Piece[];
   config: AppConfig;
   spellMode: SpellMode;
+  board: Tile[][];
 }
 
 export const initialState: State = { 
@@ -18,7 +19,8 @@ export const initialState: State = {
     },
     mode:  AppMode.Placement
   },
-  spellMode: SpellMode.Line
+  spellMode: SpellMode.Line,
+  board: []
 };
 
 export const reducer = (state: State = initialState, action: Action): State => {
@@ -54,6 +56,28 @@ export const reducer = (state: State = initialState, action: Action): State => {
         return {
           ...state,
           spellMode: action.payload
+        };
+      case ActionTypes.updateBoardMode:
+        let board = state.board;
+        const first = action.payload[0];
+        const last = action.payload[action.payload.length - 1];
+        board[first.x][first.y] = {
+          terrain: Terrain.none,
+          spell: "Origin"
+        }
+        board[last.x][last.y] = {
+          terrain: Terrain.none,
+          spell: "Target"
+        }
+        for (let i = 1; i < action.payload.length - 1; i++) {
+          board[action.payload[i].x][action.payload[i].y] = {
+            terrain: Terrain.none,
+            spell: "Target"
+          }
+        }
+        return {
+          ...state,
+          board
         };
       case ActionTypes.movePiece:
     default:

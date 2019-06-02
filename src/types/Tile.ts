@@ -3,5 +3,6 @@ import { Piece } from "./Piece";
 
 export interface Tile {
   terrain: Terrain;
-  piece: Piece;
+  piece?: Piece;
+  spell?: "Origin" | "Point" | "Target"
 }
