@@ -2,7 +2,7 @@ import { Terrain } from "./Terrain";
 import { Piece } from "./Piece";
 
 export interface Tile {
-  terrain: Terrain;
+  terrain?: Terrain;
   piece?: Piece;
   spell?: "Origin" | "Point" | "Target"
 }

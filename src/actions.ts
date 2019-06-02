@@ -1,4 +1,4 @@
-import { DraggableType, AppConfig, SpellMode } from "./types";
+import { DraggableType, AppConfig, SpellMode, Coord, Tile, TileCoord } from "./types";
 import { number } from "prop-types";
 
 export enum ActionTypes {
@@ -101,13 +101,13 @@ export interface SpellCoord {
 
 export interface UpdateBoardAction {
   type: ActionTypes.updateBoardMode,
-  payload: SpellCoord[];
+  payload: TileCoord[];
 }
 
-export function updateBoard(spellCoords: SpellCoord) {
+export function updateBoard(tileCoords: TileCoord[]): UpdateBoardAction {
   return {
     type: ActionTypes.updateBoardMode,
-    payload: spellCoords
+    payload: tileCoords
   };
 }
 
