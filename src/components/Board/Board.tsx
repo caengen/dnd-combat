@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import styled, { css } from "styled-components";
 import BoardCell from "./BoardCell";
 import { Piece } from "..";
-import {Piece as PieceType} from "../../types";
+import {Piece as PieceType, AppMode} from "../../types";
 import { StoreContext } from "../../StoreContext";
 import { dropPiece, updateConfig } from "../../actions";
 
@@ -12,23 +12,24 @@ interface RenderCellArgs {
   dimension: number;
   pieces: PieceType[];
   dropPiece: (id: string) => any;
+  disableDrag?: boolean;
 }
 function renderCell(args: RenderCellArgs) {
-  const { x, y, dimension, dropPiece, pieces} = args;
+  const { x, y, dimension, dropPiece, pieces, disableDrag} = args;
   return (
     <CellWrapper key={`X${x}Y${y}`} dimension={dimension}>
       <BoardCell x={x} y={y} dropPiece={dropPiece}>
-        {renderPiece(x, y, pieces)}
+        {renderPiece(x, y, pieces, disableDrag)}
       </BoardCell>
     </CellWrapper>
   )
 }
 
-function renderPiece(x: number, y: number, pieces: PieceType[]) {
+function renderPiece(x: number, y: number, pieces: PieceType[], disableDrag?: boolean) {
   for (let piece of pieces) {
     if (x === piece.x && y === piece.y) {
       return (
-        <Piece piece={piece} />
+        <Piece disableDrag={disableDrag} piece={piece} />
       );
     }
   }
@@ -36,8 +37,10 @@ function renderPiece(x: number, y: number, pieces: PieceType[]) {
 
 export function Board() {
   const { state, dispatch } = useContext(StoreContext);
-  const {width, height, cellDimension} = state.config.board;
+  const {board, mode } = state.config;
+  const {width, height, cellDimension} = board;
   const squares = []
+
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       squares.push(renderCell({
@@ -45,7 +48,8 @@ export function Board() {
         y, 
         dimension: cellDimension,
         pieces: state.pieces,
-        dropPiece: (id: string) => dispatch(dropPiece(id, x, y))
+        dropPiece: (id: string) => dispatch(dropPiece(id, x, y)),
+        disableDrag: mode !== AppMode.Placement
       }));
     }
   }

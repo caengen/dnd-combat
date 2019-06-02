@@ -7,6 +7,9 @@ import { Piece as PieceType} from "../types";
 const pieceSource = {
   beginDrag(props: PieceProps) {
     return { id: props.piece.id };
+  },
+  canDrag(props: PieceProps) {
+    return !props.disableDrag;
   }
 }
 
@@ -24,13 +27,14 @@ function collect(connect: DragSourceConnector, monitor: DragSourceMonitor): DndP
 interface PieceProps {
   piece: PieceType;
   size?: number;
+  disableDrag?: boolean;
 }
 function Piece(props: PieceProps & DndProps) {
   const { size, piece, connectDragSource, isDragging } = props;
   return connectDragSource(
     <div>
       <StyledPiece size={size} isDragging={isDragging}>
-        {<img src={piece.icon} />}
+        {<img draggable={false} src={piece.icon} />}
       </StyledPiece>
     </div>
   );

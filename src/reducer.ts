@@ -1,5 +1,5 @@
 import { Action, ActionTypes } from "./actions";
-import { Piece, AppConfig } from "./types";
+import { Piece, AppConfig, AppMode } from "./types";
 import { update } from "lodash/fp";
 
 export interface State {
@@ -14,7 +14,8 @@ export const initialState: State = {
       width: 8,
       height: 8,
       cellDimension: 1
-    }
+    },
+    mode:  AppMode.Placement
   }
 };
 
