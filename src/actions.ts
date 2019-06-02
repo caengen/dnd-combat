@@ -1,10 +1,11 @@
-import { DraggableType, AppConfig } from "./types";
+import { DraggableType, AppConfig, SpellMode } from "./types";
 
 export enum ActionTypes {
   addPiece = "AddPieceAction",
   movePiece = "MovePieceAction",
   dropPiece = "DropPieceAction",
-  updateConfig = "UpdateConfigAction"
+  updateConfig = "UpdateConfigAction",
+  updateSpellMode = "UpdateSpellModeAction"
 }
 
 export interface AddPieceAction {
@@ -79,4 +80,15 @@ export function updateConfig(newConfig: AppConfig): UpdateConfigAction {
   }
 }
 
-export type Action = AddPieceAction | MovePieceAction | DropPieceAction | UpdateConfigAction;
+export interface UpdateSpellModeAction {
+  type: ActionTypes.updateSpellMode,
+  payload: SpellMode
+}
+export function updateSpellMode(spellMode: SpellMode): UpdateSpellModeAction {
+  return {
+    type: ActionTypes.updateSpellMode,
+    payload: spellMode
+  }
+}
+
+export type Action = AddPieceAction | MovePieceAction | DropPieceAction | UpdateConfigAction | UpdateSpellModeAction;

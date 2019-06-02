@@ -1,10 +1,11 @@
 import { Action, ActionTypes } from "./actions";
-import { Piece, AppConfig, AppMode } from "./types";
+import { Piece, AppConfig, AppMode, SpellMode } from "./types";
 import { update } from "lodash/fp";
 
 export interface State {
   pieces: Piece[];
   config: AppConfig;
+  spellMode: SpellMode;
 }
 
 export const initialState: State = { 
@@ -16,7 +17,8 @@ export const initialState: State = {
       cellDimension: 1
     },
     mode:  AppMode.Placement
-  }
+  },
+  spellMode: SpellMode.Line
 };
 
 export const reducer = (state: State = initialState, action: Action): State => {
@@ -47,7 +49,12 @@ export const reducer = (state: State = initialState, action: Action): State => {
           return {
             ...state,
             config: action.payload
-          }
+          };
+      case ActionTypes.updateSpellMode:
+        return {
+          ...state,
+          spellMode: action.payload
+        };
       case ActionTypes.movePiece:
     default:
       return state;
