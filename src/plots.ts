@@ -20,7 +20,7 @@ export function plotLine(origin: Coord, target: Coord) {
   // Not interested in origin
   //dots.push({x: x0, y: y0});
 
-  while(!((origin.x == target.x) && (origin.y == target.y))) {
+  while(!((origin.x === target.x) && (origin.y === target.y))) {
     let e2 = err << 1;
 
     if (e2 > -dy) {

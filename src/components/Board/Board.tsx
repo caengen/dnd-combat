@@ -18,6 +18,7 @@ function renderTile(mouseState: MouseState, setMouseState: React.Dispatch<React.
   return (tile: Tile) => {
     return (
       <BoardTile
+        key={`X${tile.x}Y${tile.y}`}
         tile={tile}
         onMouseDown={handleMouseDown(setMouseState)}
         onMouseEnter={handleMouseEnter(setMouseState, mouseState)}
@@ -53,7 +54,7 @@ function handleMouseUp(setMouseState: React.Dispatch<React.SetStateAction<MouseS
   }
 }
 
-function dispatchSpell(state: State, dispatch: React.Dispatch<Action>, mouseState: MouseState) {
+function getSpellCoords(state: State, mouseState: MouseState) {
   if (!mouseState.origin || !mouseState.target) {
     return;
   }
@@ -69,23 +70,19 @@ function dispatchSpell(state: State, dispatch: React.Dispatch<Action>, mouseStat
     const { points, distance } = plotTriangle(mouseState.origin, mouseState.target);
     coords = points;
   }
-  dispatch(
-    updateBoard(
-      coords.map((c, index, arr) => {
-        let spell = "Point";
-        if (index === 0) {
-          spell = "Origin";
-        } else if (index === arr.length - 1) {
-          spell = "Target";
-        }
-        return {
-          x: c.x,
-          y: c.y,
-          spell
-        } as TileCoord;
-      })
-    )
-  );
+  return coords.map((c, index, arr) => {
+    let spell = "Point";
+    if (index === 0) {
+      spell = "Origin";
+    } else if (index === arr.length - 1) {
+      spell = "Target";
+    }
+    return {
+      x: c.x,
+      y: c.y,
+      spell
+    } as TileCoord;
+  });
 }
 
 interface MouseState {
@@ -99,32 +96,16 @@ export function Board() {
   const { mode } = state.config;
   const { width, height, cellDimension } = state.config.board;
 
-  useEffect(() => {
-    if (!mouseState.origin || !mouseState.target || mode !== AppMode.Spell) {
-      return;
-    }
+  let boardToDraw = state.board.slice();
 
-    dispatchSpell(state, dispatch, mouseState);
-  }, [mouseState]);
-
-  // initialize the board
-  useEffect(() => {
-    const rows: Tile[][] = [];
-    let columns: Tile[] = [];
-    for (let y = 0; y < height; y++) {
-      columns = [];
-      for (let x = 0; x < width; x++) {
-        columns.push({
-          x,
-          y,
-          terrain: Terrain.none
-        });
+  if (mode === AppMode.Spell && mouseState.origin && mouseState.target) {
+    const spellCoords = getSpellCoords(state, mouseState);
+    if (spellCoords) {
+      for (const sc of spellCoords) {
+        boardToDraw[sc.y][sc.x].spell = sc.spell;
       }
-      rows.push(columns);
     }
-
-    dispatch(setBoard(rows));
-  }, []);
+  }
 
   return (
     <div>
@@ -134,7 +115,7 @@ export function Board() {
         height={height * cellDimension}
         cellDimension={cellDimension}
       >
-        {state.board.map(renderRow(mouseState, setMouseState))}
+        {boardToDraw.map(renderRow(mouseState, setMouseState))}
       </StyledBoard>
     </div>
   );

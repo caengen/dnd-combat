@@ -9,6 +9,24 @@ export interface State {
   board: Tile[][];
 }
 
+function initialiseBoard(width: number, height: number) {
+  const rows: Tile[][] = [];
+  let columns: Tile[] = [];
+  for (let y = 0; y < height; y++) {
+    columns = [];
+    for (let x = 0; x < width; x++) {
+      columns.push({
+        x,
+        y,
+        terrain: Terrain.none
+      });
+    }
+    rows.push(columns);
+  }
+
+  return rows;
+}
+
 export const initialState: State = { 
   pieces: [],
   config: {
@@ -20,7 +38,7 @@ export const initialState: State = {
     mode:  AppMode.Placement
   },
   spellMode: SpellMode.Line,
-  board: []
+  board: initialiseBoard(8, 8)
 };
 
 function handleDropPiece(state: State, action: DropPieceAction) {
@@ -86,6 +104,10 @@ export const reducer = (state: State = initialState, action: Action): State => {
           board: action.payload
         };
       case ActionTypes.updateBoardMode:
+        if (action.payload.length === 0) {
+          return state;
+        }
+
         let board = state.board.slice();
         const first = action.payload[0];
         const last = action.payload[action.payload.length - 1];
