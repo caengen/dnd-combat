@@ -8,7 +8,7 @@ const cellTarget = {
   drop(props: BoardCellProps, monitor: DropTargetMonitor) {
     // see beginDrag in Piece.tsx
     const item: { id: string } = monitor.getItem();
-    props.dropPiece(item.id)
+    props.onDropPiece(item.id)
   }
 }
 
@@ -27,7 +27,7 @@ interface BoardCellProps {
   x: number;
   y: number;
   spell?: "Origin" | "Point" | "Target";
-  dropPiece: (id: string) => Action;
+  onDropPiece: (id: string) => Action;
   children?: any;
 }
 function BoardCell(props: BoardCellProps & DndProps) {

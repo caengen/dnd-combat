@@ -1,4 +1,4 @@
-import { Action, ActionTypes, SpellCoord } from "./actions";
+import { Action, ActionTypes, SpellCoord, DropPieceAction } from "./actions";
 import { Piece, AppConfig, AppMode, SpellMode, Tile, Terrain } from "./types";
 import { update } from "lodash/fp";
 
@@ -23,6 +23,40 @@ export const initialState: State = {
   board: []
 };
 
+function handleDropPiece(state: State, action: DropPieceAction) {
+  const index = state.pieces.findIndex(p => p.id === action.payload.id);
+  if (index < 0) {
+    return state;
+  }
+
+  const {x, y} = state.pieces[index];
+  const newState = update(`pieces[${index}]`, (piece: Piece) => {
+      return {
+        ...piece,
+        x: action.payload.x,
+        y: action.payload.y
+      };
+    }, state);
+  let board = state.board.slice();
+
+  // remove the pieceIndex from the old tile
+  if (x && y) {
+    board[y][x] = {
+      ...board[y][x],
+      pieceIndex: undefined
+    }
+  }
+  // add pieceIndex to the new tile
+  board[action.payload.y][action.payload.x] = {
+    ...board[action.payload.y][action.payload.x],
+    pieceIndex: index
+  }
+  return {
+    ...newState,
+    board
+  };
+}
+
 export const reducer = (state: State = initialState, action: Action): State => {
   switch (action.type) {
     case ActionTypes.addPiece:
@@ -35,18 +69,7 @@ export const reducer = (state: State = initialState, action: Action): State => {
         }
       ]};
       case ActionTypes.dropPiece:
-        const index = state.pieces.findIndex(p => p.id === action.payload.id);
-        if (index < 0) {
-          return state;
-        }
-
-        return update(`pieces[${index}]`, (piece: Piece) => {
-            return {
-              ...piece,
-              x: action.payload.x,
-              y: action.payload.y
-            };
-          }, state);
+        return handleDropPiece(state, action);
       case ActionTypes.updateConfig:
           return {
             ...state,
@@ -57,21 +80,26 @@ export const reducer = (state: State = initialState, action: Action): State => {
           ...state,
           spellMode: action.payload
         };
+      case ActionTypes.setBoard:
+        return {
+          ...state,
+          board: action.payload
+        };
       case ActionTypes.updateBoardMode:
-        let board = state.board;
+        let board = state.board.slice();
         const first = action.payload[0];
         const last = action.payload[action.payload.length - 1];
-        board[first.x][first.y] = {
-          terrain: Terrain.none,
+        board[first.y][first.x] = {
+          ...state.board[first.y][first.x],
           spell: "Origin"
         }
-        board[last.x][last.y] = {
-          terrain: Terrain.none,
+        board[last.y][last.x] = {
+          ...state.board[last.y][last.x],
           spell: "Target"
         }
         for (let i = 1; i < action.payload.length - 1; i++) {
-          board[action.payload[i].x][action.payload[i].y] = {
-            terrain: Terrain.none,
+          board[action.payload[i].y][action.payload[i].x] = {
+            ...state.board[action.payload[i].y][action.payload[i].x],
             spell: "Target"
           }
         }

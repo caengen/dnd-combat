@@ -1,5 +1,4 @@
 import { DraggableType, AppConfig, SpellMode, Coord, Tile, TileCoord } from "./types";
-import { number } from "prop-types";
 
 export enum ActionTypes {
   addPiece = "AddPieceAction",
@@ -7,8 +6,20 @@ export enum ActionTypes {
   dropPiece = "DropPieceAction",
   updateConfig = "UpdateConfigAction",
   updateSpellMode = "UpdateSpellModeAction",
-  updateBoardMode = "UpdateBoardMode"
+  updateBoardMode = "UpdateBoardMode",
+
+  setBoard = "SetBoardAction",
 }
+
+export interface SetBoardAction {
+  type: ActionTypes.setBoard;
+  payload: Tile[][];
+}
+
+export const setBoard = (payload: Tile[][]): SetBoardAction => ({
+  type: ActionTypes.setBoard,
+  payload
+})
 
 export interface AddPieceAction {
   type: ActionTypes.addPiece;
@@ -111,4 +122,4 @@ export function updateBoard(tileCoords: TileCoord[]): UpdateBoardAction {
   };
 }
 
-export type Action = AddPieceAction | MovePieceAction | DropPieceAction | UpdateConfigAction | UpdateSpellModeAction | UpdateBoardAction;
+export type Action = AddPieceAction | MovePieceAction | DropPieceAction | UpdateConfigAction | UpdateSpellModeAction | UpdateBoardAction | SetBoardAction;
