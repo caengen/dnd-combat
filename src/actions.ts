@@ -7,7 +7,7 @@ export enum ActionTypes {
   updateConfig = "UpdateConfigAction",
   updateSpellMode = "UpdateSpellModeAction",
   updateBoardMode = "UpdateBoardMode",
-
+  updateBoardSize = "updateBoardSize",
   setBoard = "SetBoardAction",
 }
 
@@ -81,6 +81,25 @@ export function dropPiece(id: string, x: number, y: number): DropPieceAction {
   }
 }
 
+export enum UpdateBoardSizeType {
+  increaseWidth,
+  decreaseWidth,
+  increaseHeight,
+  decreaseHeight
+}
+
+export interface UpdateBoardSizeAction {
+  type: ActionTypes.updateBoardSize;
+  payload: UpdateBoardSizeType;
+}
+
+export function updateBoardSize(payload: UpdateBoardSizeType): UpdateBoardSizeAction {
+  return {
+    type: ActionTypes.updateBoardSize,
+    payload
+  }
+}
+
 export interface UpdateConfigAction {
   type: ActionTypes.updateConfig,
   payload: AppConfig
@@ -122,4 +141,4 @@ export function updateBoard(tileCoords: TileCoord[]): UpdateBoardAction {
   };
 }
 
-export type Action = AddPieceAction | MovePieceAction | DropPieceAction | UpdateConfigAction | UpdateSpellModeAction | UpdateBoardAction | SetBoardAction;
+export type Action = AddPieceAction | MovePieceAction | DropPieceAction | UpdateConfigAction | UpdateSpellModeAction | UpdateBoardAction | SetBoardAction | UpdateBoardSizeAction;

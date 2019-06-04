@@ -1,12 +1,12 @@
 import React from "react";
 import { useContext } from "react";
-import { updateConfig } from "../../actions";
+import { updateConfig, updateBoardSize, UpdateBoardSizeType } from "../../actions";
 import { StoreContext } from "../../StoreContext";
 import styled from "styled-components";
 
 export function BoardInput() {
   const { state, dispatch } = useContext(StoreContext);
-  const { width, height, cellDimension } = state.config.board;
+  const { cellDimension } = state.config.board;
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(updateConfig(
       {
@@ -18,16 +18,30 @@ export function BoardInput() {
       }
     ));
   }
+  const handleChangeWidth = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (Number(e.target.value) > state.board[0].length) {
+      dispatch(updateBoardSize(UpdateBoardSizeType.increaseWidth));
+    } else {
+      dispatch(updateBoardSize(UpdateBoardSizeType.decreaseWidth));
+    }
+  };
+  const handleChangeHeight = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (Number(e.target.value) > state.board.length) {
+      dispatch(updateBoardSize(UpdateBoardSizeType.increaseHeight));
+    } else {
+      dispatch(updateBoardSize(UpdateBoardSizeType.decreaseHeight));
+    }
+  };
 
   return (
     <StyledBoardInput>
       <InputWrapper>
         Width:
-        <input value={width} onChange={handleInput} name="width" type="number" min="8" max="128" />
+        <input value={state.board[0].length} onChange={handleChangeWidth} name="width" type="number" min="8" max="128" />
       </InputWrapper>
       <InputWrapper>
         Height: 
-        <input value={height} onChange={handleInput} name="height" type="number" min="8" max="128" />
+        <input value={state.board.length} onChange={handleChangeHeight} name="height" type="number" min="8" max="128" />
       </InputWrapper>
       <InputWrapper>
         Cell dimension:

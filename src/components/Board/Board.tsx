@@ -94,7 +94,7 @@ export function Board() {
   const [ mouseState, setMouseState ] = useState<MouseState>({ origin: undefined, target: undefined });
   const { state, dispatch } = useContext(StoreContext);
   const { mode } = state.config;
-  const { width, height, cellDimension } = state.config.board;
+  const { cellDimension } = state.config.board;
 
   let boardToDraw = state.board.slice();
 
@@ -111,8 +111,8 @@ export function Board() {
     <div>
       <BoardInput />
       <StyledBoard
-        width={width * cellDimension}
-        height={height * cellDimension}
+        width={state.board[0].length * cellDimension}
+        height={state.board.length * cellDimension}
         cellDimension={cellDimension}
       >
         {boardToDraw.map(renderRow(mouseState, setMouseState))}

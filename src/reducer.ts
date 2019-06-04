@@ -1,4 +1,4 @@
-import { Action, ActionTypes, SpellCoord, DropPieceAction } from "./actions";
+import { Action, ActionTypes, SpellCoord, DropPieceAction, UpdateBoardSizeType } from "./actions";
 import { Piece, AppConfig, AppMode, SpellMode, Tile, Terrain } from "./types";
 import { update } from "lodash/fp";
 
@@ -129,6 +129,54 @@ export const reducer = (state: State = initialState, action: Action): State => {
           ...state,
           board
         };
+      case ActionTypes.updateBoardSize:
+        let newBoard = state.board.slice();
+        switch (action.payload) {
+          case UpdateBoardSizeType.increaseWidth:
+            for (let i = 0; i < newBoard.length; i++) {
+              newBoard[i].push({
+                x: newBoard[i].length,
+                y: i,
+                terrain: Terrain.none
+              });
+            }
+            return {
+              ...state,
+              board: newBoard
+            };
+          case UpdateBoardSizeType.decreaseWidth:
+            for (let i = 0; i < newBoard.length; i++) {
+              newBoard[i].pop();
+            }
+            return {
+              ...state,
+              board: newBoard
+            };
+          case UpdateBoardSizeType.increaseHeight:
+            const width = newBoard[0].length;
+            let row = [];
+            for(let i = 0; i < width; i++) {
+              row.push({
+                x: i,
+                y: newBoard.length,
+                terrain: Terrain.none
+              });
+            }
+            newBoard.push(row);
+
+            return {
+              ...state,
+              board: newBoard
+            };
+          case UpdateBoardSizeType.decreaseHeight:
+            newBoard.pop();
+            return {
+              ...state,
+              board: newBoard
+            };
+          default:
+            return state;
+        }
       case ActionTypes.movePiece:
     default:
       return state;
