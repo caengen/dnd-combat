@@ -28,3 +28,8 @@ export const GridCell = styled.div<PieceGridCellProps>`
   grid-column: ${p => p.col};
   grid-row: ${p => p.row};
 `;
+export const Spell = styled.div`
+  background-color: rgba(255, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+`;

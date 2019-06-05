@@ -1,4 +1,4 @@
-import { DraggableType, AppConfig, SpellMode, Coord, Tile, TileCoord } from "./types";
+import { DraggableType, AppConfig, SpellMode, Tile, TileCoord } from "./types";
 
 export enum ActionTypes {
   addPiece = "AddPieceAction",

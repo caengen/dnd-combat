@@ -7,28 +7,26 @@ import { dropPiece } from "../../actions";
 
 interface BoardTileProps {
   tile: Tile;
-  onMouseDown?: (x: number, y: number) => void;
-  onMouseEnter?: (x: number, y: number) => void;
-  onMouseUp?: (x: number, y: number) => void;
+  onMouseDown?: () => void;
+  onMouseEnter?: () => void;
+  onMouseUp?: () => void;
 }
 
 export function BoardTile(props: BoardTileProps) {
   const { state, dispatch } = useContext(StoreContext)
+  const {onMouseDown, onMouseEnter, onMouseUp} = props;
   const { x, y, spell } = props.tile;
   const handleDrop = (id: string) => dispatch(dropPiece(id, x, y));
 
-  const handleMouseDown = () => props.onMouseDown && props.onMouseDown(x, y);
-  const handleMouseEnter = () => props.onMouseEnter && props.onMouseEnter(x, y);
-  const handleMouseUp = () => props.onMouseUp && props.onMouseUp(x, y);
   return (
     <CellWrapper 
       key={`X${x}Y${y}`} 
       dimension={state.config.board.cellDimension}
       row={(y + 1)}
       col={(x + 1)}
-      onMouseDown={handleMouseDown}
-      onMouseEnter={handleMouseEnter}
-      onMouseUp={handleMouseUp}
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onMouseUp={onMouseUp}
     >
       <BoardCell
         x={x} y={y} 

@@ -1,4 +1,4 @@
-import { Action, ActionTypes, SpellCoord, DropPieceAction, UpdateBoardSizeType } from "./actions";
+import { Action, ActionTypes, DropPieceAction, UpdateBoardSizeType } from "./actions";
 import { Piece, AppConfig, AppMode, SpellMode, Tile, Terrain } from "./types";
 import { update } from "lodash/fp";
 

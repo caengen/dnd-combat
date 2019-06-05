@@ -1,28 +1,29 @@
 import React, { useContext, useState } from "react";
-import {AppMode, Tile, SpellMode, Coord, TileCoord, Piece as IPiece} from "../../types";
+import {AppMode, Tile, Coord, Piece as IPiece} from "../../types";
 import { StoreContext } from "../../StoreContext";
 import { BoardInput } from "./BoardInput";
-import { StyledBoard, GridCell, BaseLayer } from "./Board.styles";
+import { StyledBoard, GridCell } from "./Board.styles";
 import { BoardTile } from "./BoardTile";
-import { State } from "../../reducer";
-import { plotLine, plotCircle, plotTriangle } from "../../plots";
 import Piece from "../Piece";
+import debounce from "lodash/debounce";
+import { SpellTiles } from "./SpellTiles";
 
-function renderRow(mouseState: MouseState, setMouseState: React.Dispatch<React.SetStateAction<MouseState>>) {
+function renderRow(spellState: SpellState, setSpellState: React.Dispatch<any>) {
   return (row: Tile[]) =>{
-    return row.map(renderTile(mouseState, setMouseState));
+    return row.map(renderTile(spellState, setSpellState));
   }
 }
 
-function renderTile(mouseState: MouseState, setMouseState: React.Dispatch<React.SetStateAction<MouseState>>) {
+function renderTile(spellState: SpellState, setSpellState: React.Dispatch<any>) {
   return (tile: Tile) => {
+    const coord = {x: tile.x, y: tile.y};
     return (
       <BoardTile
         key={`X${tile.x}Y${tile.y}`}
         tile={tile}
-        onMouseDown={handleMouseDown(setMouseState)}
-        onMouseEnter={handleMouseEnter(setMouseState, mouseState)}
-        onMouseUp={handleMouseUp(setMouseState)}
+        onMouseDown={() => setSpellOrigin(coord, spellState, setSpellState)}
+        onMouseEnter={() => setSpellTarget(coord, spellState, setSpellState)}
+        onMouseUp={() => resetSpellState(spellState, setSpellState)}
       />
     );
   }
@@ -31,7 +32,11 @@ function renderTile(mouseState: MouseState, setMouseState: React.Dispatch<React.
 function renderPiece(disableDrag: boolean){
   return (piece: IPiece) => {
     return (piece.x !== undefined && piece.y !== undefined) ? (
-      <GridCell row={(piece.y + 1)} col={(piece.x + 1)}>
+      <GridCell 
+        key={`PX${piece.x}Y${piece.y}`}
+        row={(piece.y + 1)} 
+        col={(piece.x + 1)}
+      >
         <Piece
           key={piece.id}
           piece={piece}
@@ -42,86 +47,50 @@ function renderPiece(disableDrag: boolean){
   }
 }
 
-function handleMouseDown(setMouseState: React.Dispatch<React.SetStateAction<MouseState>>) {
-  return (x: number, y: number) => {
-    setMouseState({
-      origin: {x, y},
-      target: {x, y}
-    });
-  }
-}
-function handleMouseEnter(setMouseState: React.Dispatch<React.SetStateAction<MouseState>>,  mouseState: MouseState) {
-  return (x: number, y: number) => {
-    setMouseState({
-      ...mouseState,
-      target: {x, y}
-    });
-  }
-}
-
-function handleMouseUp(setMouseState: React.Dispatch<React.SetStateAction<MouseState>>) {
-  return (x: number, y: number) => {
-    setMouseState({
-      origin: undefined,
-      target: undefined
-    });
-  }
-}
-
-function getSpellCoords(state: State, mouseState: MouseState) {
-  if (!mouseState.origin || !mouseState.target) {
+function setSpellOrigin(coord: Coord, spellState: SpellState, setSpellState: React.Dispatch<any>) {
+  if (spellState.active) {
     return;
   }
-  let coords: Coord[] = [];
-  if (state.spellMode === SpellMode.Line) {
-    coords = plotLine(mouseState.origin, mouseState.target);
+
+  setSpellState({
+    ...spellState,
+    active: true,
+    origin: coord
+  });
+}
+function setSpellTarget(coord: Coord, spellState: SpellState, setSpellState: React.Dispatch<any>) {
+  if (!spellState.active) {
+    return;
   }
-  else if (state.spellMode === SpellMode.Circle) {
-    const radius = Math.max(Math.abs(mouseState.origin.x - mouseState.target.x), Math.abs(mouseState.origin.y - mouseState.target.y));
-    coords = plotCircle(mouseState.origin, radius);
+
+  setSpellState({
+    ...spellState,
+    target: coord
+  });
+}
+function resetSpellState(spellState: SpellState, setSpellState: React.Dispatch<any>) {
+  if (!spellState.active) {
+    return;
   }
-  else if (state.spellMode === SpellMode.Cone) {
-    const { points, distance } = plotTriangle(mouseState.origin, mouseState.target);
-    coords = points;
-  }
-  return coords.map((c, index, arr) => {
-    let spell = "Point";
-    if (index === 0) {
-      spell = "Origin";
-    } else if (index === arr.length - 1) {
-      spell = "Target";
-    }
-    return {
-      x: c.x,
-      y: c.y,
-      spell
-    } as TileCoord;
+
+  setSpellState({
+    active: false,
+    origin: undefined,
+    target: undefined
   });
 }
 
-interface MouseState {
-  origin?: Coord,
-  target?: Coord
+interface SpellState {
+  active: boolean;
+  origin?: Coord;
+  target?: Coord;
 }
-
 export function Board() {
-  const [ mouseState, setMouseState ] = useState<MouseState>({ origin: undefined, target: undefined });
   const { state } = useContext(StoreContext);
   const { mode } = state.config;
   const { cellDimension } = state.config.board;
-
-  /*
-  let boardToDraw = state.board.slice();
-  if (mode === AppMode.Spell && mouseState.origin && mouseState.target) {
-    const spellCoords = getSpellCoords(state, mouseState);
-    if (spellCoords) {
-      for (const sc of spellCoords) {
-        boardToDraw[sc.y][sc.x].spell = sc.spell;
-      }
-    }
-  }
-  */
-
+  const [spellState, setSpellState] = useState<SpellState>({ active: false });
+  
   return (
     <div>
       <BoardInput />
@@ -131,8 +100,13 @@ export function Board() {
           height={state.board.length * cellDimension}
           cellDimension={cellDimension}
         >
-          {state.board.map(renderRow(mouseState, setMouseState))}
+          {state.board.map(renderRow(spellState, debounce(setSpellState, 250)))}
           {state.pieces.map(renderPiece(state.config.mode !== AppMode.Placement))}
+          {(mode === AppMode.Spell) && <SpellTiles
+            mode={state.spellMode}
+            origin={spellState.origin}
+            target={spellState.target}
+          />}
         </StyledBoard>
       </div>
     </div>
