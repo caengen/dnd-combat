@@ -1,12 +1,12 @@
-import React, { useContext, useState, useEffect } from "react";
-import {AppMode, Tile, Terrain, SpellMode, Coord, TileCoord} from "../../types";
+import React, { useContext, useState } from "react";
+import {AppMode, Tile, SpellMode, Coord, TileCoord, Piece as IPiece} from "../../types";
 import { StoreContext } from "../../StoreContext";
-import { setBoard, Action, updateBoard } from "../../actions";
 import { BoardInput } from "./BoardInput";
-import { StyledBoard } from "./Board.styles";
+import { StyledBoard, GridCell, BaseLayer } from "./Board.styles";
 import { BoardTile } from "./BoardTile";
 import { State } from "../../reducer";
 import { plotLine, plotCircle, plotTriangle } from "../../plots";
+import Piece from "../Piece";
 
 function renderRow(mouseState: MouseState, setMouseState: React.Dispatch<React.SetStateAction<MouseState>>) {
   return (row: Tile[]) =>{
@@ -25,6 +25,20 @@ function renderTile(mouseState: MouseState, setMouseState: React.Dispatch<React.
         onMouseUp={handleMouseUp(setMouseState)}
       />
     );
+  }
+}
+
+function renderPiece(disableDrag: boolean){
+  return (piece: IPiece) => {
+    return (piece.x !== undefined && piece.y !== undefined) ? (
+      <GridCell row={(piece.y + 1)} col={(piece.x + 1)}>
+        <Piece
+          key={piece.id}
+          piece={piece}
+          disabledDrag={disableDrag}
+        />
+      </GridCell>
+    ) : null;
   }
 }
 
@@ -92,12 +106,12 @@ interface MouseState {
 
 export function Board() {
   const [ mouseState, setMouseState ] = useState<MouseState>({ origin: undefined, target: undefined });
-  const { state, dispatch } = useContext(StoreContext);
+  const { state } = useContext(StoreContext);
   const { mode } = state.config;
   const { cellDimension } = state.config.board;
 
+  /*
   let boardToDraw = state.board.slice();
-
   if (mode === AppMode.Spell && mouseState.origin && mouseState.target) {
     const spellCoords = getSpellCoords(state, mouseState);
     if (spellCoords) {
@@ -106,17 +120,21 @@ export function Board() {
       }
     }
   }
+  */
 
   return (
     <div>
       <BoardInput />
-      <StyledBoard
-        width={state.board[0].length * cellDimension}
-        height={state.board.length * cellDimension}
-        cellDimension={cellDimension}
-      >
-        {boardToDraw.map(renderRow(mouseState, setMouseState))}
-      </StyledBoard>
+      <div>
+        <StyledBoard
+          width={state.board[0].length * cellDimension}
+          height={state.board.length * cellDimension}
+          cellDimension={cellDimension}
+        >
+          {state.board.map(renderRow(mouseState, setMouseState))}
+          {state.pieces.map(renderPiece(state.config.mode !== AppMode.Placement))}
+        </StyledBoard>
+      </div>
     </div>
   );
 }
