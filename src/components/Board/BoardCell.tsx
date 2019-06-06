@@ -26,14 +26,13 @@ function collect(connect: DropTargetConnector, monitor: DropTargetMonitor): DndP
 interface BoardCellProps {
   x: number;
   y: number;
-  spell?: "Origin" | "Point" | "Target";
   onDropPiece: (id: string) => Action;
   children?: any;
 }
 function BoardCell(props: BoardCellProps & DndProps) {
   return props.connectDropTarget(
     <div>
-      <Cell spell={props.spell}>{props.children}</Cell>
+      <Cell>{props.children}</Cell>
     </div>
   );
 }

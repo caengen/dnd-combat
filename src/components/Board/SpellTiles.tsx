@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { SpellMode, Coord } from "../../types";
 import { GridCell, Spell } from "./Board.styles";
 import { plotLine, plotCircle, plotTriangle } from "../../plots";
@@ -8,7 +8,7 @@ interface SpellTilesProps {
   origin?: Coord,
   target?: Coord;
 }
-export function SpellTiles(props: SpellTilesProps) {
+export const SpellTiles = memo((props: SpellTilesProps) => {
   const { mode, origin, target } = props;
   if (!origin || !target) {
     return null;
@@ -32,7 +32,7 @@ export function SpellTiles(props: SpellTilesProps) {
       {coords.map(renderGridCell)}
     </>
   );
-}
+});
 
 function renderGridCell(coord: Coord) {
   return (
